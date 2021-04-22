@@ -1,96 +1,100 @@
 #lang racket
 
+(provide date)
+(provide is-date)
+
 ;TDA Date
 
 ;CONSTRUCTOR
 
 ;Función date
 ;Descripcion: Función que crea un date con el siguiente formato (dd mm yyyy)
-;Dominio: entero, entero, entero.
-;Recorrido: lista con la fecha en el siguiente formato (dd mm yyyy)
+;Dominio: entero x entero x entero x entero x entero.
+;Recorrido: lista con la fecha en el siguiente formato (dd mm yyyy HH:mm)
 
-(define (date dd mm yyyy)
-  (list dd mm yyyy)
-)
+(define date (lambda (dd mm yyyy hh MM)
+  (list dd mm yyyy hh MM)
+))
 
 
 ;PERTENENCIA
 
 ;Funcion isdate
 ;Descripcion: Función que valida si el argumento dado pertenece a la definicion de date
-;Dominio: argumento pasado a la función, puede ser cualquier valor o tipo de dato.
+;Dominio: Dato
 ;Recorrido: True o False dependiendo de las validaciones
 
-(define (isdate paramdate)
+(define is-date (lambda (paramdate)
   (if (list? paramdate)
       (if (= (length paramdate) 3)
-          (if (and (integer? (car paramdate)) (integer? (car (cdr paramdate))) (integer? (car (cdr (cdr paramdate)))))
+          (if (and (integer? (car paramdate)) (integer? (car (cdr paramdate))) (integer? (car (cdr (cdr paramdate))))
+                   (integer? (car (cdr (cdr (cdr paramdate))))) (integer? (car (cdr (cdr (cdr (cdr paramdate)))))))
               #t
               #f
            )#f
        )#f
- ))
+ )))
 
 
 ;SELECTORES
 
-;Función getday
+;Función ge-tday
 ;Descripcion: Función que retorna el día del date
 ;Dominio: date
 ;Recorrido: entero
 
-(define (getday date)
+(define get-day (lambda (date)
   (car date)
-)
+))
 
-;Función getmonth
+;Función get-month
 ;Descripcion: Función que retorna el mes del date
 ;Dominio: date
 ;Recorrido: entero
 
-(define (getmonth date)
+(define get-month (lambda (date)
   (car (cdr date))
-)
+))
 
 
-;Función getyear
+;Función get-year
 
 ;Función que retorna el año del date
 ;Dominio: date
 ;Recorrido: entero
 
-(define (getyear date)
+(define get-year (lambda (date)
   (car (cdr (cdr date)))
-)
+))
 
 
 ;MODIFICADORES
 
-;Función modday
+;Función mod-day
 ;Descripción: Función que modifica el día de un date
-;Dominio: date, entero
+;Dominio: date x entero
 ;Recorrido: date
 
-(define (modday date newday)
-  (list newday (car (cdr date)) (car (cdr (cdr date))))
-)
+(define mod-day (lambda (date newday)
+  (list newday (get-month date) (get-year date))
+))
 
 
-;Función modmonth
+;Función mod-month
 ;Descripción: Función que modifica el mes de un date
-;Dominio: date, entero
+;Dominio: date x entero
 ;Recorrido: date
 
-(define (modmonth date newmonth)
-  (list (car date) newmonth (car (cdr (cdr date))))
-)
+(define mod-month (lambda (date newmonth)
+  (list (get-day date) newmonth (get-year date))
+))
 
 
-;Función modyear
+;Función mod-year
 ;Descripción: Función que modifica el año de un date
-;Dominio: date, entero
+;Dominio: date x entero
 ;Recorrido: date
 
-(define (modyear date newyear)
-  (list (car date) (car (cdr date)) newyear)
-)
+(define mod-year (lambda (date newyear)
+  (list (get-day date) (get-month date) newyear)
+))
