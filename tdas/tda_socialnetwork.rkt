@@ -1,6 +1,6 @@
 #lang racket
 (require "tda_user.rkt")
-(require "tda_account.rkt")
+(require "tda_date.rkt")
 
 
 ;tda socialnetwork
@@ -12,51 +12,69 @@
 ;Dominio: string
 ;Recorrido: Lista con el nombre de la red social y una lista con las cuentas
 
-(define socialnetwork (lambda (name)
-  (list name '())
+(define socialnetwork (lambda (name date encryptFn decryptFn)
+  (list name date null null null)
 ))
+
+
+; PERTENENCIA
+;funcion socialnetwork?
+;funcion para validar que es un socialnetwork
+;
+
 
 
 ;SELECTORES
 
-;get-socialname
-;Descripcion: Funcion que obtiene el nombre de la red social
+;funcion para seleccionar lista de usuarios
 ;Dominio: socialnetwork
+;Recorrido: lista de usuarios
+(define get-user-list (lambda (s)
+   (car (cdr (cdr s)))
+))
+
+;funcion para seleccionar lista de publicaciones
+;Dominio: socialnetwork
+;Recorrido: lista de publicaciones
+(define get-pub-list (lambda (s)
+   (car (cdr (cdr (cdr s))))
+))
+
+
+;funcion para seleccionar lista de reacciones
+;Dominio: socialnetwork
+;Recorrido: lista de reacciones
+(define get-react-list (lambda (s)
+   (car (cdr (cdr (cdr (s)))))
+))
+
+
+
+;Otras funciones
+
+;Funcion encrypt
+;Funcion que encripta un texto inviertiendo su contenido
+;Dominio: string
 ;Recorrido: string
-
-(define get-socialname (lambda (socialnetwork)
-  (car socialnetwork)
-))
-
-;get-accounts
-;Descripcion: Funcion que obtiene la lista de cuentas de la red social
-;Dominio: socialnetwork
-;Recorrido: list
-
-(define get-accounts (lambda (socialnetwork)
-  (car (cdr socialnetwork))
+(define encrypt (lambda (content)
+     (list->string (reverse (string->list content)))
 ))
 
 
-;MODIFICADORES
-
-;mod-socialname
-;Descripcion: Funcion para modificar el nombre de la red social
-;Dominio: socialnetwork x string
-;Recorrido: socialnetwork
-
-(define mod-socialname (lambda (socialnetwork name)
-      (cons name ((get-accounts socialnetwork)))
+;Funcion decrypt
+;Funcion que desencripta un texto inviertiendo su contenido
+;Dominio: string
+;Recorrido: string
+(define decrypt (lambda (content)
+     (list->string (reverse (string->list content)))
 ))
 
 
-;OTRAS OPERACIONES
 
-;register
-;Funcion que registra a un usuario
-
-
-
+(provide socialnetwork)
+(provide get-user-list)
+(provide encrypt)
+(provide decrypt)
 
 
 

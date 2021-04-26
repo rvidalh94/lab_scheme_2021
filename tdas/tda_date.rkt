@@ -1,7 +1,7 @@
 #lang racket
 
 (provide date)
-(provide is-date)
+(provide date?)
 
 ;TDA Date
 
@@ -12,8 +12,11 @@
 ;Dominio: entero x entero x entero x entero x entero.
 ;Recorrido: lista con la fecha en el siguiente formato (dd mm yyyy HH:mm)
 
-(define date (lambda (dd mm yyyy hh MM)
-  (list dd mm yyyy hh MM)
+(define date (lambda (dd mm yyyy)
+    (if (and (integer? dd) (integer? mm) (integer? yyyy))
+        (list dd mm yyyy)
+        null
+     )
 ))
 
 
@@ -24,11 +27,10 @@
 ;Dominio: Dato
 ;Recorrido: True o False dependiendo de las validaciones
 
-(define is-date (lambda (paramdate)
+(define date? (lambda (paramdate)
   (if (list? paramdate)
       (if (= (length paramdate) 3)
-          (if (and (integer? (car paramdate)) (integer? (car (cdr paramdate))) (integer? (car (cdr (cdr paramdate))))
-                   (integer? (car (cdr (cdr (cdr paramdate))))) (integer? (car (cdr (cdr (cdr (cdr paramdate)))))))
+          (if (and (integer? (car paramdate)) (integer? (car (cdr paramdate))) (integer? (car (cdr (cdr paramdate)))))
               #t
               #f
            )#f

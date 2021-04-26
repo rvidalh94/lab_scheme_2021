@@ -10,16 +10,20 @@
 ;Recorrido: Lista con el user creado
 
 (define user (lambda (username password)
-    (list username password)))
+    (if (and (string? username) (string? password))
+        (list username password)
+         null
+     )
+))
 
 ;PERTENTENCIA
 
-;Función is-user
+;Función user?
 ;Descripcion: Función que permite verificar si el argumento dado a la función pertenece a un user
 ;Dominio: Dato
 ;Recorrido: True o False, dependiendo de la validación aplicada.
 
-(define is-user (lambda (paramuser)
+(define user? (lambda (paramuser)
   (if (list? paramuser)
       (if (= (length paramuser) 2)
           (if (and (string? (car paramuser)) (string? (car (cdr paramuser))))
@@ -70,6 +74,37 @@
   (list (get-username user) newpass)
  ))
 
+
+;Otras Funciones
+
+;user-exist
+;Validad si existe usuario en una lista de usuarios
+;Dominio: lista x user
+;Recorrido: true o false dependiendo la validacion
+
+(define user-exist (lambda (userlist b)
+     (if (null? userlist)
+         #f
+         (if (equal? (get-username (car userlist)) b)
+             #t
+             (user-exist (cdr userlist) b)
+          )
+      )
+))
+
+; (user-exist (list (user "andres" "1234") (user "basti" "1234") (user "stefane" "1234") (user "rodrigo" "1234")) "rodrigo")
+
+
+;add-user
+;Funcion para agregar a un user al final de la lista de usuarios
+;Dominio: list x user
+(define add-user(lambda (userlist b)
+    (if (empty? userlist)
+        (cons b null)
+        (if (eqv? (car userlist) null)
+            (cons b null)
+            (cons (car userlist) (add-user (cdr userlist) b))))))
+
+
 (provide user)
-
-
+(provide user-exist)

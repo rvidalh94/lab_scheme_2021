@@ -1,1 +1,23 @@
 #lang racket
+(require "tda_user.rkt")
+(require "tda_account.rkt")
+
+
+;tda socialnetwork
+
+;CONSTRUCTOR
+
+;Funcion socialnetwork
+;;Descripcion: funcion para crear una socialnetwork
+;Dominio: string
+;Recorrido: Lista con el nombre de la red social y una lista con las cuentas
+
+(define socialnetwork (lambda (name date encryptFn decryptFn)
+  (list name date '() '() '())
+))
+
+
+
+
+
+
