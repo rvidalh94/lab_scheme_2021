@@ -1,17 +1,19 @@
 #lang racket
 
+(require "tda_date.rkt")
+
 ;TDA de user
 
 ;CONSTRUCTOR
 
 ;Función user
 ;Descripcion: Función que permite la creación de un usuario.
-;Dominio: string x string
-;Recorrido: Lista con el user creado
+;Dominio: string x string x date
+;Recorrido: lista
 
-(define user (lambda (username password)
-    (if (and (string? username) (string? password))
-        (list username password)
+(define user (lambda (username password dt)
+    (if (and (string? username) (string? password) (date? dt))
+        (list username password dt)
          null
      )
 ))
@@ -21,12 +23,12 @@
 ;Función user?
 ;Descripcion: Función que permite verificar si el argumento dado a la función pertenece a un user
 ;Dominio: Dato
-;Recorrido: True o False, dependiendo de la validación aplicada.
+;Recorrido: booleano
 
 (define user? (lambda (paramuser)
   (if (list? paramuser)
-      (if (= (length paramuser) 2)
-          (if (and (string? (car paramuser)) (string? (car (cdr paramuser))))
+      (if (= (length paramuser) 3)
+          (if (and (string? (car paramuser)) (string? (car (cdr paramuser))) (date? (car (cdr (cdr paramuser)))))
               #t
               #f
            )#f
@@ -36,21 +38,29 @@
 
 ;SELECTORES
 
-;Función getusername
+;Función get-username
 ;Descripcion: retorna el username del user
 ;Dominio: user
-;Recorrido:string con la username del user
+;Recorrido: string
 
 (define get-username (lambda (user)
   (car user)
 ))
 
-;Función getpassword
+;Función get-password
 ;Descripcion: retorna el password del user
 ;Dominio: user
-;Recorrido: string con password del user
+;Recorrido: string
 (define get-password (lambda (user)
   (car (cdr user))
+))
+
+;Función get-user-date
+;Descripcion: retorna el password del user
+;Dominio: user
+;Recorrido: string
+(define get-user-date (lambda (user)
+  (car (cdr (cdr user)))
 ))
 
 
@@ -62,7 +72,7 @@
 ;Recorrido: user
 
 (define change-username (lambda (user newusername)
-  (list newusername (get-password user))
+  (list newusername (get-password user) (get-user-date user))
  ))
 
 ;Función changeuserpass
@@ -71,7 +81,7 @@
 ;Recorrido: user
 
 (define change-userpass (lambda (user newpass)
-  (list (get-username user) newpass)
+  (list (get-username user) newpass (get-user-date user))
  ))
 
 
@@ -80,7 +90,7 @@
 ;user-exist
 ;Validad si existe usuario en una lista de usuarios
 ;Dominio: lista x user
-;Recorrido: true o false dependiendo la validacion
+;Recorrido: booleano
 
 (define user-exist (lambda (userlist b)
      (if (null? userlist)
@@ -98,6 +108,7 @@
 ;add-user
 ;Funcion para agregar a un user al final de la lista de usuarios
 ;Dominio: list x user
+;Recorrido: lista
 (define add-user(lambda (userlist b)
     (if (empty? userlist)
         (cons b null)
@@ -106,5 +117,7 @@
             (cons (car userlist) (add-user (cdr userlist) b))))))
 
 
+
 (provide user)
 (provide user-exist)
+(provide add-user)

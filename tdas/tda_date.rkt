@@ -1,8 +1,5 @@
 #lang racket
 
-(provide date)
-(provide date?)
-
 ;TDA Date
 
 ;CONSTRUCTOR
@@ -10,7 +7,7 @@
 ;Función date
 ;Descripcion: Función que crea un date con el siguiente formato (dd mm yyyy)
 ;Dominio: entero x entero x entero x entero x entero.
-;Recorrido: lista con la fecha en el siguiente formato (dd mm yyyy HH:mm)
+;Recorrido: lista
 
 (define date (lambda (dd mm yyyy)
     (if (and (integer? dd) (integer? mm) (integer? yyyy))
@@ -25,7 +22,7 @@
 ;Funcion isdate
 ;Descripcion: Función que valida si el argumento dado pertenece a la definicion de date
 ;Dominio: Dato
-;Recorrido: True o False dependiendo de las validaciones
+;Recorrido: booleano
 
 (define date? (lambda (paramdate)
   (if (list? paramdate)
@@ -100,3 +97,7 @@
 (define mod-year (lambda (date newyear)
   (list (get-day date) (get-month date) newyear)
 ))
+
+
+(provide date)
+(provide date?)
