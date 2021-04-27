@@ -1,2 +1,3 @@
-
-tdas/compiled/
+*.dep
+*.zo
+*.bak
