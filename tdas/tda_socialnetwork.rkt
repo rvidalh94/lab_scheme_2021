@@ -13,7 +13,7 @@
 ;Recorrido: Lista con el nombre de la red social, lista de pares usuario x fecha, listad de publicaciones y lista de reacciones
 
 (define socialnetwork (lambda (name date encryptFn decryptFn)
-  (list name date null null null)
+  (list name date null null null "")
 ))
 
 
@@ -25,9 +25,10 @@
 
 (define socialnetwork? (lambda (sn)
     (if (list? sn)
-        (if (= (length sn) 5)
+        (if (= (length sn) 6)
             (if (and (string? (car sn)) (date? (car (cdr sn))) (list? (car (cdr (cdr sn))))
-                     (list? (car (cdr (cdr (cdr sn))))) (list? (car (cdr (cdr (cdr (cdr sn)))))))
+                     (list? (car (cdr (cdr (cdr sn))))) (list? (car (cdr (cdr (cdr (cdr sn))))))
+                     (string? (car (cdr (cdr (cdr (cdr (cdr sn))))))))
                 #t
                 #f
             )
@@ -56,14 +57,14 @@
 
 ;funcion para seleccionar lista de usuarios
 ;Dominio: socialnetwork
-;Recorrido: lista de usuarios
+;Recorrido: lista
 (define get-user-list (lambda (s)
    (car (cdr (cdr s)))
 ))
 
 ;funcion para seleccionar lista de publicaciones
 ;Dominio: socialnetwork
-;Recorrido: lista de publicaciones
+;Recorrido: lista
 (define get-pub-list (lambda (s)
    (car (cdr (cdr (cdr s))))
 ))
@@ -71,9 +72,16 @@
 
 ;funcion para seleccionar lista de reacciones
 ;Dominio: socialnetwork
-;Recorrido: lista de reacciones
+;Recorrido: lista
 (define get-react-list (lambda (s)
    (car (cdr (cdr (cdr (cdr s)))))
+))
+
+;funcion para seleccionar usuario en sesion
+;Dominio: socialnetwork
+;Recorrido: integer
+(define get-logged-user (lambda (s)
+   (car (cdr (cdr (cdr (cdr (cdr s))))))
 ))
 
 
@@ -85,8 +93,27 @@
 ;recorrido: socialnetwork
 
 (define update-user-list (lambda (sn nl)
-    (list (get-social-name sn) (get-social-date sn) nl (get-pub-list sn) (get-react-list sn))
+    (list (get-social-name sn) (get-social-date sn) nl (get-pub-list sn) (get-react-list sn) (get-logged-user sn))
 ))
+
+;update-logged-user
+;funcion que modifica el username del usuario activo en sesion
+;dominio: socialnetwork x string
+;recorrido: socialnetwork
+
+(define update-logged-user (lambda (sn username)
+     (list (get-social-name sn) (get-social-date sn) (get-user-list sn) (get-pub-list sn) (get-react-list sn) username)
+))
+
+;update-pub-list
+;funcion que actualiza la lista de publicaciones
+;Dominio: socialnetwork x lista
+;recorrido: socialnetwork
+
+(define update-pub-list (lambda (sn nl)
+    (list (get-social-name sn) (get-social-date sn) (get-user-list sn) nl (get-react-list sn) (get-logged-user sn))
+))
+
 
 
 ;Otras funciones
@@ -116,4 +143,5 @@
 (provide decrypt)
 (provide socialnetwork?)
 (provide update-user-list)
-
+(provide update-logged-user)
+(provide get-pub-list)

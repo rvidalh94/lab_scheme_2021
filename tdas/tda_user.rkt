@@ -87,22 +87,22 @@
 
 ;Otras Funciones
 
-;user-exist
+;get-user
 ;Validad si existe usuario en una lista de usuarios
 ;Dominio: lista x user
 ;Recorrido: booleano
 
-(define user-exist (lambda (userlist b)
+(define get-user (lambda (userlist b)
      (if (null? userlist)
-         #f
+         null
          (if (equal? (get-username (car userlist)) b)
-             #t
-             (user-exist (cdr userlist) b)
+             (car userlist)
+             (get-user (cdr userlist) b)
           )
       )
 ))
 
-; (user-exist (list (user "andres" "1234") (user "basti" "1234") (user "stefane" "1234") (user "rodrigo" "1234")) "rodrigo")
+; (get-user (list (user "andres" "1234" (date 01 01 2000)) (user "basti" "1234" (date 01 01 2000)) (user "stefane" "1234" (date 01 01 2000)) (user "rodrigo" "1234" (date 01 01 2000))) "rodrigo")
 
 
 ;add-user
@@ -119,5 +119,7 @@
 
 
 (provide user)
-(provide user-exist)
+(provide get-user)
+(provide get-username)
+(provide get-password)
 (provide add-user)
