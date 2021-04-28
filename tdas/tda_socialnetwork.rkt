@@ -145,3 +145,4 @@
 (provide update-user-list)
 (provide update-logged-user)
 (provide get-pub-list)
+(provide get-logged-user)

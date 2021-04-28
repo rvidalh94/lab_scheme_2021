@@ -47,14 +47,27 @@
 
 
 
-;funcion post
-;funcion que agrega una publicacion al socialnetwork
-;dominio: socialnetwork
+;funcion follow
+;funcion que agrega un usuario a la lista de amigos del user
+;dominio: socialnetwork x string
 ;recorrido: socialnetwork
 
-;(define post (lambda (sn)
- ;              (lambda (dt)
-  ;               (lambda (b userlist)
-                   
-   ;            )))
-;)
+(define follow (lambda (sn)
+                 (lambda (dt)
+                   (lambda (usr)
+                     (if (not (eqv? (get-logged-user sn) usr))
+                         (let ([loggeduser (get-user (get-user-list sn) (get-logged-user sn))])
+                           (if (not (exist-friend (get-user-friends loggeduser) usr))
+                               #t
+                               sn
+                            )  
+                          ) 
+                         sn
+                      )
+                    )))
+)
+
+;(define face (socialnetwork "Facebook" (date 01 02 2004) encrypt decrypt))
+;(define face(register face (date 01 04 2021) "rodrigo" "12345"))
+;(((login face "rodrigo" "12345" follow) (date 30 10 2020)) "stefane")
+;(((login face "rodrigo" "12345" follow) (date 30 10 2020)) "rodrigo")

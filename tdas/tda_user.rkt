@@ -8,12 +8,12 @@
 
 ;Función user
 ;Descripcion: Función que permite la creación de un usuario.
-;Dominio: string x string x date
+;Dominio: string x string x date x lista
 ;Recorrido: lista
 
 (define user (lambda (username password dt)
     (if (and (string? username) (string? password) (date? dt))
-        (list username password dt)
+        (list username password dt null)
          null
      )
 ))
@@ -27,8 +27,8 @@
 
 (define user? (lambda (paramuser)
   (if (list? paramuser)
-      (if (= (length paramuser) 3)
-          (if (and (string? (car paramuser)) (string? (car (cdr paramuser))) (date? (car (cdr (cdr paramuser)))))
+      (if (= (length paramuser) 4)
+          (if (and (string? (car paramuser)) (string? (car (cdr paramuser))) (date? (car (cdr (cdr paramuser)))) (list? (car (cdr (cdr (cdr paramuser))))))
               #t
               #f
            )#f
@@ -63,6 +63,15 @@
   (car (cdr (cdr user)))
 ))
 
+;Función get-user-friends
+;Descripcion: retorna el password del user
+;Dominio: user
+;Recorrido: string
+(define get-user-friends (lambda (user)
+  (car (cdr (cdr (cdr user))))
+))
+
+
 
 ;MODIFICADORES
 
@@ -85,12 +94,22 @@
  ))
 
 
+;Función update-user-friends
+;Descripcion: Funcion para modificar el password del user. Recibe al user y la nueva password, retorna al user modificado.
+;Dominio: user x lista.
+;Recorrido: user
+
+(define update-user-friends (lambda (user nl)
+  (list (get-username user) (get-password user) (get-user-date user) nl)
+ ))
+
+
 ;Otras Funciones
 
 ;get-user
-;Validad si existe usuario en una lista de usuarios
-;Dominio: lista x user
-;Recorrido: booleano
+;obtiene un usuario en una lista de usuarios
+;Dominio: lista x string
+;Recorrido: user
 
 (define get-user (lambda (userlist b)
      (if (null? userlist)
@@ -116,6 +135,48 @@
             (cons b null)
             (cons (car userlist) (add-user (cdr userlist) b))))))
 
+;add-friend
+;Funcion para agregar id de amigo al final de la lista de friends
+;Dominio: list x 
+;Recorrido: lista
+(define add-friend(lambda (usr fid)
+    (if (empty? (get-user-friends usr))
+        (cons fid null)
+        (if (eqv? (car (get-user-friends usr)) null)
+            (cons fid null)
+            (cons (car (get-user-friends usr)) (add-user (cdr (get-user-friends usr)) fid))))))
+
+;(define user1 (user "rodrigo" "12345" (date 27 04 2021)))
+;(define user2 (update-user-friends user1 (add-friend user1 "stefane")))
+
+
+;exist-friend
+;Validad si existe username en una lista de amigos
+;Dominio: lista x string
+;Recorrido: booleano
+
+(define exist-friend (lambda (friend-list friend-name)
+     (if (null? friend-list)
+         #f
+         (if (equal? (car friend-list) friend-name)
+             #t
+             (exist-friend (cdr friend-list) friend-name)
+          )
+      )
+))
+
+
+;update-user-in-list
+;obtiene un usuario en una lista de usuarios
+;Dominio: lista x string
+;Recorrido: user
+
+(define update-user-in-list (lambda (userlist b)
+      (if (equal? (get-username (car userlist)) b)
+          (car userlist)
+          (get-user (cdr userlist) b)
+       )
+))
 
 
 (provide user)
@@ -123,3 +184,8 @@
 (provide get-username)
 (provide get-password)
 (provide add-user)
+(provide update-user-friends)
+(provide add-friend)
+(provide exist-friend)
+(provide update-user-friends)
+(provide get-user-friends)
