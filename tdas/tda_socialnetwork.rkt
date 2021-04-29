@@ -138,11 +138,14 @@
 
 
 (provide socialnetwork)
-(provide get-user-list)
+(provide socialnetwork?)
 (provide encrypt)
 (provide decrypt)
-(provide socialnetwork?)
 (provide update-user-list)
 (provide update-logged-user)
+(provide get-user-list)
 (provide get-pub-list)
+(provide get-react-list)
 (provide get-logged-user)
+(provide get-social-name)
+(provide get-social-date)

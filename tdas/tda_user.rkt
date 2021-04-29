@@ -137,7 +137,7 @@
 
 ;add-friend
 ;Funcion para agregar id de amigo al final de la lista de friends
-;Dominio: list x 
+;Dominio: list x string
 ;Recorrido: lista
 (define add-friend(lambda (usr fid)
     (if (empty? (get-user-friends usr))
@@ -167,16 +167,34 @@
 
 
 ;update-user-in-list
-;obtiene un usuario en una lista de usuarios
-;Dominio: lista x string
-;Recorrido: user
+;actualiza a un usuario dentro de una lista de usuarios
+;Dominio: user x user x lista
+;Recorrido: lista
 
-(define update-user-in-list (lambda (userlist b)
-      (if (equal? (get-username (car userlist)) b)
-          (car userlist)
-          (get-user (cdr userlist) b)
-       )
-))
+(define (update-user-in-list userOld userNew userlist templist)
+ (cond
+  ((null? userlist) '())
+  ((eq? (get-username (car userlist)) (get-username userOld))
+    (if (null? templist)
+        (cons userNew (cdr userlist))
+        (cons templist (cons userNew (cdr userlist)))
+    ))
+  (else
+    (if (null? templist)
+        (update-user-in-list userOld userNew (cdr userlist) (car userlist))
+        (update-user-in-list userOld userNew (cdr userlist) (cons templist (car userlist)))
+    )
+)))
+
+
+
+;(define (update-user-in-list userOld userNew userlist)
+ ;(cond
+  ;((null? userlist) '())
+  ;((list? (car userlist)) (cons (update-user-in-list userOld userNew (car userlist)) (update-user-in-list userOld userNew (cdr userlist))))
+  ;((eq? (car userlist) (get-username userOld)) userNew)
+  ;(else
+  ; (cons (car userlist) (update-user-in-list userOld userNew (cdr userlist))))))
 
 
 (provide user)
@@ -189,3 +207,10 @@
 (provide exist-friend)
 (provide update-user-friends)
 (provide get-user-friends)
+(provide update-user-in-list)
+
+;(define lista1 (list (user "rodrigo" "1234" (date 01 01 2020)) (user "stefane" "1234" (date 01 01 2020)) (user "basti" "1234" (date 01 01 2020))))
+;(define old (car lista1))
+;(define new (list "rodrigo" "1234" (list 1 1 2020) (list "stefane")))
+;(update-user-in-list old new lista1 null)
+
