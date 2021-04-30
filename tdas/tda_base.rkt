@@ -58,13 +58,50 @@
 
 ;-------------------------------------------------------------------------------------------------
 
+
 ;FUNCION POST
 ;Descripción: Función que permite a un usuario realizar un post en su muro o en el de otros usuarios.
 ;Dominio: socialnetwork
 ;Recorrido: funcion
 
+(define post (lambda (sn)
+               (lambda (dt)
+                 (lambda (content . users)
+                    (let ([loggeduser (get-user (get-account-list sn) (get-logged-user sn))])
+                       (if (null? users)
+                           (f0 sn (get-username loggeduser) dt content)
+                           (if (check-friends (get-account (get-account-list sn) (get-username loggeduser)) users); solo postea si TODOS sin amigos de user.
+                               (car (map (lambda (x) (f0 sn x dt content (get-username loggeduser))) users))
+                               sn
+                           )                           
+                        )                       
+                     ) 
+                )))
+)
+
+;FUNCIONES AUXILIARES PARA POST
+(define f0 (lambda (sn usr dt content . user-from)
+     (list (get-social-name sn) (get-social-date sn)
+           (f1 usr (get-account-list sn) content dt user-from) "")
+))
 
 
+(define f1 (lambda (usr account-list body dt . user-from)
+      (if (null? user-from)
+          (update-account usr (update-account-publication (get-account account-list usr)
+          (add-publication (get-account-pub (get-account account-list usr)) usr body dt)) account-list null)
+          (update-account usr (update-account-publication (get-account account-list usr)
+          (add-publication (get-account-pub (get-account account-list usr)) user-from body dt)) account-list null) 
+       )      
+))
+
+;EJEMPLOS DE PRUEBA PARA POST
+;(define face (socialnetwork "Facebook" (date 01 02 2004) encrypt decrypt))
+;(define face(register face (date 01 04 2021) "rodrigo" "12345"))
+;(define face(register face (date 12 09 2021) "stefane" "abcde"))
+;(define face1 (((login face "rodrigo" "12345" post) (date 30 10 2020)) "primer post"))
+;(define face2 (((login face1 "rodrigo" "12345" post) (date 30 10 2020)) "segundo post"))
+;(define face3 (((login face1 "rodrigo" "12345" post) (date 30 10 2020)) "segundo post" "stefane"))
 
 ;-------------------------------------------------------------------------------------------------
 
@@ -111,4 +148,3 @@
 
 
 ;-------------------------------------------------------------------------------------------------
-

@@ -102,21 +102,6 @@
 ;Otras funciones
 
 
-;get-account
-;Descripción: Función que obtiene una cuenta mediante el username
-;Dominio: lista x string
-;Recorrido: account
-
-(define get-account (lambda (account-list b)
-     (if (null? account-list)
-         null
-         (if (equal? (get-username (get-account-user (car account-list))) b)
-             (car account-list)
-             (get-account (cdr account-list) b)
-          )
-      )
-))
-
 
 
 (provide socialnetwork)
@@ -129,4 +114,3 @@
 (provide get-logged-user)
 (provide get-social-name)
 (provide get-social-date)
-(provide get-account)

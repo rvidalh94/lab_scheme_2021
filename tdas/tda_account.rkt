@@ -1,6 +1,7 @@
 #lang racket
 (require "tda_user.rkt")
 (require "tda_date.rkt")
+(require "tda_publication.rkt")
 (require "otras_funciones.rkt")
 
 ;TDA ACCOUNT
@@ -11,7 +12,7 @@
 ;Descripción: Función que permite la reacion de una cuenta
 ;Dominio: user x date
 (define account (lambda(usr dt)
-    (list usr dt  null null null)
+    (list usr dt  null (cons 0 null) (cons 0 null))
 ))
 
 
@@ -72,6 +73,16 @@
  ))
 
 
+;Función update-account-publication
+;Descripción: Función que modifica la lista de publicaciones.
+;Dominio: account x lista.
+;Recorrido: account
+
+(define update-account-publication (lambda (acnt nl)
+  (list (get-account-user acnt) (get-account-date acnt) (get-account-friends acnt) nl (get-account-react acnt))
+ ))
+
+
 ;OTRAS FUNCIONES
 
 ;add-account
@@ -103,6 +114,23 @@
           )
       )
 ))
+
+
+;get-account
+;Descripción: Función que obtiene una cuenta mediante el username
+;Dominio: lista x string
+;Recorrido: account
+
+(define get-account (lambda (account-list b)
+     (if (null? account-list)
+         null
+         (if (equal? (get-username (get-account-user (car account-list))) b)
+             (car account-list)
+             (get-account (cdr account-list) b)
+          )
+      )
+))
+
 
 
 ;add-friend
@@ -164,6 +192,19 @@
 ))
 
 
+; POR COMENTAR
+(define check-friends (lambda (account friend-list-temp)
+    (if (null? friend-list-temp)
+        #t
+        (let ([acnt-friends (get-account-friends account)])
+          (cond
+            ((member (car friend-list-temp) acnt-friends) (check-friends account (cdr friend-list-temp)))
+            (else
+             #f
+             ))
+          )
+    )))
+
 
 (provide get-account-user)
 (provide get-account-date)
@@ -174,4 +215,8 @@
 (provide get-user)
 (provide update-account)
 (provide update-account-friends)
+(provide update-account-publication)
 (provide exist-friend)
+(provide get-account)
+(provide check-friends)
+
