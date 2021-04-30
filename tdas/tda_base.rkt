@@ -16,7 +16,8 @@
 (define register (lambda (sn dt username password)
      (if (and (socialnetwork? sn) (date? dt) (string? username) (string? password))
          (if (null? (get-account (get-account-list sn) username))
-             (list (get-social-name sn) (get-social-date sn) (add-account (get-account-list sn) (user username password) dt) "")
+             (list (get-social-name sn) (get-social-date sn) (add-account (get-account-list sn) (user username password) dt) ""
+                   (get-encrypt sn) (get-decrypt sn))
              sn
           )
           null
@@ -28,7 +29,7 @@
 ;(define face(register face (date 25 04 2021) "rodrigo" "123455")) # se agrega primer usuario
 ;(define face(register face (date 01 04 2021) "stefane" "aaaa")) # se agrega segundo usuario
 ;(define face(register face (date 01 04 2021) "rodrigo" "bbb")) # se agrega usuario existente (username)
-;(define face(register face (date 01 04 2021) "Martina" "aaaa")) # se agrega tercer usuario
+;(define face(register face (date 01 04 2021) "martina" "aaaa")) # se agrega tercer usuario
 
 ;-------------------------------------------------------------------------------------------------
 
@@ -69,9 +70,9 @@
                  (lambda (content . users)
                     (let ([loggeduser (get-user (get-account-list sn) (get-logged-user sn))])
                        (if (null? users)
-                           (f0 sn (get-username loggeduser) dt content)
-                           (if (check-friends (get-account (get-account-list sn) (get-username loggeduser)) users); solo postea si TODOS sin amigos de user.
-                               (car (map (lambda (x) (f0 sn x dt content (get-username loggeduser))) users))
+                           (f0 sn (get-username loggeduser) dt content users)
+                           (if (check-friends (get-account (get-account-list sn) (get-username loggeduser)) null); solo postea si TODOS son amigos de user.                               
+                               (post-to-users sn users dt content (get-username loggeduser))
                                sn
                            )                           
                         )                       
@@ -82,29 +83,43 @@
 ;FUNCIONES AUXILIARES PARA POST
 (define f0 (lambda (sn usr dt content . user-from)
      (list (get-social-name sn) (get-social-date sn)
-           (f1 usr (get-account-list sn) content dt user-from) "")
+           (f1 usr (get-account-list sn) ((get-encrypt sn) content) dt user-from) "" (get-encrypt sn) (get-decrypt sn))
 ))
 
 
-(define f1 (lambda (usr account-list body dt . user-from)
+(define f1 (lambda (usr account-list body dt user-from)
       (if (null? user-from)
           (update-account usr (update-account-publication (get-account account-list usr)
           (add-publication (get-account-pub (get-account account-list usr)) usr body dt)) account-list null)
           (update-account usr (update-account-publication (get-account account-list usr)
-          (add-publication (get-account-pub (get-account account-list usr)) user-from body dt)) account-list null) 
+          (add-publication (get-account-pub (get-account account-list usr)) user-from body dt)) account-list null)
        )      
 ))
 
+(define post-to-users (lambda (sn user-to dt content user-from)
+       (if (null? user-to)
+           sn
+           (post-to-users (f0 sn (car user-to) dt content user-from) (cdr user-to) dt content user-from)
+       )
+ ))
+
+
 ;EJEMPLOS DE PRUEBA PARA POST
-;(define face (socialnetwork "Facebook" (date 01 02 2004) encrypt decrypt))
-;(define face(register face (date 01 04 2021) "rodrigo" "12345"))
-;(define face(register face (date 12 09 2021) "stefane" "abcde"))
-;(define face1 (((login face "rodrigo" "12345" post) (date 30 10 2020)) "primer post"))
-;(define face2 (((login face1 "rodrigo" "12345" post) (date 30 10 2020)) "segundo post"))
-;(define face3 (((login face1 "rodrigo" "12345" post) (date 30 10 2020)) "segundo post" "stefane"))
+;(define face1 (socialnetwork "Facebook" (date 01 02 2004) encrypt decrypt))
+;(define face2 (register face1 (date 01 04 2021) "rodrigo" "12345"))
+;(define face3 (register face2 (date 12 09 2021) "stefane" "abcde"))
+;(define face4 (register face3 (date 12 09 2021) "martina" "abcde"))
+
+;(define face5 (((login face4 "rodrigo" "12345" follow) (date 30 10 2020)) "stefane"))
+;(define face6 (((login face5 "rodrigo" "12345" follow) (date 30 10 2020)) "martina"))
+;(define face7 (((login face6 "rodrigo" "12345" post) (date 30 10 2020)) "segundo post" "stefane" "martina"))
+
+;(define face (((login face "rodrigo" "12345" post) (date 30 10 2020)) "primer post"))
+;(define face (((login face "rodrigo" "12345" post) (date 30 10 2020)) "segundo post"))
+;(define face (((login face "rodrigo" "12345" post) (date 30 10 2020)) "segundo post" "stefane"))
+
 
 ;-------------------------------------------------------------------------------------------------
-
 
 ;FUNCION FOLLOW
 ;Descripción: Función que permite agregar un usuario a la lista de amigos de otro usuario, retorna socialnetwork y cierra sesion.
@@ -125,7 +140,7 @@
                                      (appendPropio (get-account-friends (get-account (get-account-list sn) (get-username loggeduser))) usr))
                                      (get-account-list sn) null)
                                      
-                               "")
+                               "" (get-encrypt sn) (get-decrypt sn))
                             ) 
                           ) 
                          sn

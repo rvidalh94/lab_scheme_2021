@@ -157,21 +157,19 @@
 ;la busqueda se puede tornar muy exaustiva al tener muchos usuarios.
 
 
-(define update-account (lambda (username updatet-account account-list templist)
-   (cond
-     ((null? account-list) '())
-     ((eq? (get-username (get-account-user (car account-list))) username)
+(define update-account (lambda (username updated-account account-list templist)
+   (if(eq? (get-username (get-account-user (car account-list))) username)
        (if (null? templist)
-            (cons updatet-account (cdr account-list))
-            (cons templist (cons updatet-account (cdr account-list)))
-        ))
-      (else
+            (cons updated-account (cdr account-list))
+            (append (appendPropio templist updated-account) (cdr account-list))
+        )
         (if (null? templist)
-            (update-account username updatet-account (cdr account-list) (car account-list))
-            (update-account username updatet-account (cdr account-list) (cons templist (car account-list)))
+            (update-account username updated-account (cdr account-list) (appendPropio templist (car account-list)))
+            (update-account username updated-account (cdr account-list) (appendPropio templist (car account-list)))
          )
-   ))
+     )
 ))
+
 
 
 ;exist-friend
@@ -219,4 +217,3 @@
 (provide exist-friend)
 (provide get-account)
 (provide check-friends)
-

@@ -15,7 +15,7 @@
 ;Recorrido: Lista con el nombre de la red social, lista de pares usuario x fecha, listad de publicaciones y lista de reacciones
 
 (define socialnetwork (lambda (name date encryptFn decryptFn)
-  (list name date null "")
+  (list name date null "" encryptFn decryptFn)
 ))
 
 
@@ -27,7 +27,7 @@
 
 (define socialnetwork? (lambda (sn)
     (if (list? sn)
-        (if (= (length sn) 4)
+        (if (= (length sn) 6)
             (if (and (string? (car sn)) (date? (car (cdr sn))) (list? (car (cdr (cdr sn))))
                      (string? (car (cdr (cdr (cdr sn))))))
                 #t
@@ -74,6 +74,22 @@
    (car (cdr (cdr (cdr s))))
 ))
 
+;get-encrypt
+;Descripción: Función que optiene la funcion de encriptar en la red social.
+;Dominio: socialnetwork
+;Recorrido: function
+(define get-encrypt (lambda (s)
+   (car (cdr (cdr (cdr (cdr s)))))
+))
+
+;get-decrypt
+;Descripción: Función que optiene la funcion de desencriptar en la red social.
+;Dominio: socialnetwork
+;Recorrido: function
+(define get-decrypt (lambda (s)
+   (car (cdr (cdr (cdr (cdr (cdr s))))))
+))
+
 
 
 ;MODIFICADORES
@@ -84,7 +100,7 @@
 ;recorrido: socialnetwork
 
 (define update-user-list (lambda (sn nl)
-    (list (get-social-name sn) (get-social-date sn) nl (get-logged-user sn))
+    (list (get-social-name sn) (get-social-date sn) nl (get-logged-user sn) (get-encrypt sn) (get-decrypt sn))
 ))
 
 
@@ -94,7 +110,7 @@
 ;recorrido: socialnetwork
 
 (define update-logged-user (lambda (sn username)
-     (list (get-social-name sn) (get-social-date sn) (get-account-list sn) username)
+     (list (get-social-name sn) (get-social-date sn) (get-account-list sn) username (get-encrypt sn) (get-decrypt sn))
 ))
 
 
@@ -114,3 +130,5 @@
 (provide get-logged-user)
 (provide get-social-name)
 (provide get-social-date)
+(provide get-encrypt)
+(provide get-decrypt)
