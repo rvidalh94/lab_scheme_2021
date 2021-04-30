@@ -1,34 +1,35 @@
 #lang racket
 (require "tda_user.rkt")
 (require "tda_date.rkt")
+(require "tda_account.rkt")
+(require "otras_funciones.rkt")
 
 
-;tda socialnetwork
+;TDA SOCIALNETWORK
 
 ;CONSTRUCTOR
 
 ;Funcion socialnetwork
-;;Descripcion: funcion para crear una socialnetwork
-;Dominio: string
+;Descripción: Función para crear una socialnetwork
+;Dominio: string x date x funcion x funcion
 ;Recorrido: Lista con el nombre de la red social, lista de pares usuario x fecha, listad de publicaciones y lista de reacciones
 
 (define socialnetwork (lambda (name date encryptFn decryptFn)
-  (list name date null null null "")
+  (list name date null "")
 ))
 
 
 ; PERTENENCIA
 ;funcion socialnetwork?
-;funcion para validar que es un socialnetwork
+;Descripción: Función para validar que es un socialnetwork.
 ;Dominio: valor
 ;Recorrido: true o false depende de la validacion
 
 (define socialnetwork? (lambda (sn)
     (if (list? sn)
-        (if (= (length sn) 6)
+        (if (= (length sn) 4)
             (if (and (string? (car sn)) (date? (car (cdr sn))) (list? (car (cdr (cdr sn))))
-                     (list? (car (cdr (cdr (cdr sn))))) (list? (car (cdr (cdr (cdr (cdr sn))))))
-                     (string? (car (cdr (cdr (cdr (cdr (cdr sn))))))))
+                     (string? (car (cdr (cdr (cdr sn))))))
                 #t
                 #f
             )
@@ -41,98 +42,79 @@
 
 ;SELECTORES
 
-;funcion para seleccionar nombre de red social
+;get-social-name
+;Descripción: Función para obtener nombre de red social.
 ;Dominio: socialnetwork
 ;Recorrido: string
 (define get-social-name (lambda (s)
    (car s)
 ))
 
-;funcion para seleccionar fecha de creacion
+;get-social-date
+;funcion para obtener la fecha de creacion de una red social.
 ;Dominio: socialnetwork
 ;Recorrido: date
 (define get-social-date (lambda (s)
    (car (cdr s))
 ))
 
-;funcion para seleccionar lista de usuarios
+;get-account-list
+;Descripción: Función para obtener la lista de cuentas de una red social.
 ;Dominio: socialnetwork
 ;Recorrido: lista
-(define get-user-list (lambda (s)
+(define get-account-list (lambda (s)
    (car (cdr (cdr s)))
 ))
 
-;funcion para seleccionar lista de publicaciones
+;get-logged-user
+;Descripción: Función para obtener el username del usuario en sesion activa en una red social.
 ;Dominio: socialnetwork
-;Recorrido: lista
-(define get-pub-list (lambda (s)
+;Recorrido: string
+(define get-logged-user (lambda (s)
    (car (cdr (cdr (cdr s))))
 ))
 
 
-;funcion para seleccionar lista de reacciones
-;Dominio: socialnetwork
-;Recorrido: lista
-(define get-react-list (lambda (s)
-   (car (cdr (cdr (cdr (cdr s)))))
-))
-
-;funcion para seleccionar usuario en sesion
-;Dominio: socialnetwork
-;Recorrido: integer
-(define get-logged-user (lambda (s)
-   (car (cdr (cdr (cdr (cdr (cdr s))))))
-))
-
 
 ;MODIFICADORES
 
-;update-user-list
-;funcion que actualiza la lista de usuarios
+;update-account-list
+;Descripción: Función que actualiza la lista de usuarios de una red social.
 ;Dominio: socialnetwork x lista
 ;recorrido: socialnetwork
 
 (define update-user-list (lambda (sn nl)
-    (list (get-social-name sn) (get-social-date sn) nl (get-pub-list sn) (get-react-list sn) (get-logged-user sn))
+    (list (get-social-name sn) (get-social-date sn) nl (get-logged-user sn))
 ))
 
+
 ;update-logged-user
-;funcion que modifica el username del usuario activo en sesion
+;Descripción: Función que modifica el username del usuario activo en sesion de una red social.
 ;dominio: socialnetwork x string
 ;recorrido: socialnetwork
 
 (define update-logged-user (lambda (sn username)
-     (list (get-social-name sn) (get-social-date sn) (get-user-list sn) (get-pub-list sn) (get-react-list sn) username)
-))
-
-;update-pub-list
-;funcion que actualiza la lista de publicaciones
-;Dominio: socialnetwork x lista
-;recorrido: socialnetwork
-
-(define update-pub-list (lambda (sn nl)
-    (list (get-social-name sn) (get-social-date sn) (get-user-list sn) nl (get-react-list sn) (get-logged-user sn))
+     (list (get-social-name sn) (get-social-date sn) (get-account-list sn) username)
 ))
 
 
 
 ;Otras funciones
 
-;Funcion encrypt
-;Funcion que encripta un texto inviertiendo su contenido
-;Dominio: string
-;Recorrido: string
-(define encrypt (lambda (content)
-     (list->string (reverse (string->list content)))
-))
 
+;get-account
+;Descripción: Función que obtiene una cuenta mediante el username
+;Dominio: lista x string
+;Recorrido: account
 
-;Funcion decrypt
-;Funcion que desencripta un texto inviertiendo su contenido
-;Dominio: string
-;Recorrido: string
-(define decrypt (lambda (content)
-     (list->string (reverse (string->list content)))
+(define get-account (lambda (account-list b)
+     (if (null? account-list)
+         null
+         (if (equal? (get-username (get-account-user (car account-list))) b)
+             (car account-list)
+             (get-account (cdr account-list) b)
+          )
+      )
 ))
 
 
@@ -143,9 +125,8 @@
 (provide decrypt)
 (provide update-user-list)
 (provide update-logged-user)
-(provide get-user-list)
-(provide get-pub-list)
-(provide get-react-list)
+(provide get-account-list)
 (provide get-logged-user)
 (provide get-social-name)
 (provide get-social-date)
+(provide get-account)

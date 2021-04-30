@@ -1,12 +1,13 @@
 #lang racket
 
-;TDA Date
+;TDA DATE
+
 
 ;CONSTRUCTOR
 
-;Función date
-;Descripcion: Función que crea un date con el siguiente formato (dd mm yyyy)
-;Dominio: entero x entero x entero x entero x entero.
+;date
+;Descripcion: Función que crea un date con el siguiente formato (dd mm yyyy).
+;Dominio: entero x entero x entero
 ;Recorrido: lista
 
 (define date (lambda (dd mm yyyy)
@@ -17,11 +18,12 @@
 ))
 
 
+
 ;PERTENENCIA
 
-;Funcion isdate
-;Descripcion: Función que valida si el argumento dado pertenece a la definicion de date
-;Dominio: Dato
+;date?
+;Descripcion: Función que valida si el argumento dado pertenece a la definicion de date.
+;Dominio: valor
 ;Recorrido: booleano
 
 (define date? (lambda (paramdate)
@@ -37,8 +39,8 @@
 
 ;SELECTORES
 
-;Función ge-tday
-;Descripcion: Función que retorna el día del date
+;get-day
+;Descripcion: Función que retorna el día del date.
 ;Dominio: date
 ;Recorrido: entero
 
@@ -46,8 +48,9 @@
   (car date)
 ))
 
-;Función get-month
-;Descripcion: Función que retorna el mes del date
+
+;get-month
+;Descripcion: Función que retorna el mes del date.
 ;Dominio: date
 ;Recorrido: entero
 
@@ -56,9 +59,8 @@
 ))
 
 
-;Función get-year
-
-;Función que retorna el año del date
+;get-year
+;Función que retorna el año del date.
 ;Dominio: date
 ;Recorrido: entero
 
@@ -69,8 +71,8 @@
 
 ;MODIFICADORES
 
-;Función mod-day
-;Descripción: Función que modifica el día de un date
+;mod-day
+;Descripción: Función que modifica el día de un date.
 ;Dominio: date x entero
 ;Recorrido: date
 
@@ -79,8 +81,8 @@
 ))
 
 
-;Función mod-month
-;Descripción: Función que modifica el mes de un date
+;mod-month
+;Descripción: Función que modifica el mes de un date.
 ;Dominio: date x entero
 ;Recorrido: date
 
@@ -89,8 +91,8 @@
 ))
 
 
-;Función mod-year
-;Descripción: Función que modifica el año de un date
+;mod-year
+;Descripción: Función que modifica el año de un date.
 ;Dominio: date x entero
 ;Recorrido: date
 
