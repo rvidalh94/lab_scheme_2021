@@ -11,8 +11,9 @@
 ;account
 ;Descripción: Función que permite la reacion de una cuenta
 ;Dominio: user x date
+;Recorrido: account
 (define account (lambda(usr dt)
-    (list usr dt  null (cons 0 null) (cons 0 null))
+    (list usr dt  null  null null)
 ))
 
 
@@ -30,7 +31,7 @@
 ;Función get-account-date
 ;Descripción: Función que retorna la fecha de creacion de la cuenta.
 ;Dominio: account
-;Recorrido: lista
+;Recorrido: date
 (define get-account-date (lambda (acnt)
   (car (cdr acnt))
 ))
@@ -86,24 +87,25 @@
 ;OTRAS FUNCIONES
 
 ;add-account
-;Descripción: Función para agregar a un user al final de la lista de usuarios.
-;Dominio: list x user
+;Descripción: Función para una cuenta nueva al final de la lista de cuentas.
+;Dominio: list x user x date
 ;Recorrido: lista
 ;Se utiliza recursión natural, ya que se agrega solo de a 1 elemento a la vez,
 ;por lo que no deberiamos tener un eventual desbordamiento.
 
-(define add-account(lambda (account-list b dt)
+(define add-account(lambda (account-list usr dt)
     (if (empty? account-list)
-        (cons (account b dt) null)
+        (cons (account usr dt) null)
         (if (eqv? (car account-list) null)
-            (cons (account b dt) null)
-            (cons (car account-list) (add-account (cdr account-list) b dt))))))
+            (cons (account usr dt) null)
+            (cons (car account-list) (add-account (cdr account-list) usr dt))))))
 
 
-;get-account
-;Descripción: Función que obtiene un usuario en una lista de usuarios mediante el username.
+;get-user
+;Descripción: Función que obtiene un usuario en una lista de cuentas.
 ;Dominio: lista x string
 ;Recorrido: user
+;Se utiliza recursión de cola, ya que se debe buscar en una extensa de cuentas.
 
 (define get-user (lambda (account-list b)
      (if (null? account-list)
@@ -120,6 +122,7 @@
 ;Descripción: Función que obtiene una cuenta mediante el username
 ;Dominio: lista x string
 ;Recorrido: account
+;Se utiliza recursión de cola, ya que al buscar una cuenta en n cuentas, si el n es muy grande, puede provocar desbordamiento.
 
 (define get-account (lambda (account-list b)
      (if (null? account-list)
@@ -149,12 +152,12 @@
 
 
 
-;update-user
-;Descripción: Función que actualiza a un usuario dentro de una lista de usuarios
-;Dominio: user x user x lista x lista
+;update-account
+;Descripción: Función que una cuenta dentro de una lista de cuentas.
+;Dominio: string x account x lista x lista
 ;Recorrido: lista
-;Se utiliza recursión de cola, ya que al momento de buscar un usuario para su actualizar,
-;la busqueda se puede tornar muy exaustiva al tener muchos usuarios.
+;Se utiliza recursión de cola, ya que al momento de buscar una cuenta para su actualizar,
+;la busqueda se puede tornar muy exaustiva al muchas cuentas.
 
 
 (define update-account (lambda (username updated-account account-list templist)
@@ -190,18 +193,42 @@
 ))
 
 
-; POR COMENTAR
-(define check-friends (lambda (account friend-list-temp)
+;only-friend-list
+;Descripción: Función que recibe una lista de usuarios y solo retorna los contenidos dentro de otra lista.
+;Dominio: account x lista x lista
+;Recorrido: lista
+;Se utiliza recursión de cola.
+
+(define only-friend-list (lambda (account friend-list-temp friend-list-last)
     (if (null? friend-list-temp)
-        #t
+        friend-list-last
         (let ([acnt-friends (get-account-friends account)])
           (cond
-            ((member (car friend-list-temp) acnt-friends) (check-friends account (cdr friend-list-temp)))
+            ((member (car friend-list-temp) acnt-friends) (only-friend-list account (cdr friend-list-temp)
+                                                                         (appendPropio friend-list-last (car friend-list-temp))))
             (else
-             #f
+             (member (car friend-list-temp) acnt-friends) (only-friend-list account (cdr friend-list-temp) friend-list-last)
              ))
           )
-    )))
+ )))
+
+
+
+;search-publication
+;Descripción: Función que retorna una publicacion segun un ID dado.
+;Dominio: lista
+;Recorrido: publicacion
+(define search-publication (lambda (account-list pID)
+        (if (null? account-list)
+            null
+            (let ([pub (get-publication (get-account-pub (car account-list)) pID)])
+              (if (null? pub)
+                  (search-publication (cdr account-list) pID)
+                  pub
+                  )
+             )
+         )
+))
 
 
 (provide get-account-user)
@@ -216,4 +243,5 @@
 (provide update-account-publication)
 (provide exist-friend)
 (provide get-account)
-(provide check-friends)
+(provide only-friend-list)
+(provide search-publication)

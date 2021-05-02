@@ -1,5 +1,12 @@
 #lang racket
 
+
+;append-propio
+;Descripción: Función que agrega a un elemento al final de la lista.
+;Dominio: lista x elemento
+;Recorrido: lista
+;utiliza recursion natural.
+
 (define appendPropio
   (lambda (parActual nuevoElemento)
     (if (empty? parActual)
@@ -7,6 +14,7 @@
         (if (eqv? (car parActual) null)
             (cons nuevoElemento null)
             (cons (car parActual) (appendPropio (cdr parActual) nuevoElemento))))))
+
 
 ;Funcion encrypt
 ;Descripción: Función que encripta un texto inviertiendo su contenido.
