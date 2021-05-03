@@ -9,6 +9,7 @@
 
 
 ;FUNCION REGISTER
+
 ;Descripción: Función que permite el registro de un usuario en una red social.
 ;Dominio: socialnetwork x date x string x string
 ;Recorrido: socialnetwork
@@ -26,6 +27,7 @@
 ))
 
 ; EJEMPLOS DE PRUEBA PARA REGISTER
+
 ;(define face (socialnetwork "Facebook" (date 01 02 2004) encrypt decrypt)) - se crea red social
 ;(define face(register face (date 25 04 2021) "rodrigo" "123455")) - se agrega primer usuario
 ;(define face(register face (date 01 04 2021) "stefane" "aaaa")) - se agrega segundo usuario
@@ -37,6 +39,7 @@
 
 
 ;FUNCION LOGIN
+
 ;Descripción: Función que permite a un usuario iniciar sesion en una red social.
 ;Dominio: socialnetwork x string x string x operation
 ;Recorrido: funcion
@@ -56,6 +59,7 @@
 ))
 
 ;EJEMPLOS DE PRUEBA PARA LOGIN
+
 ;(define face (socialnetwork "Facebook" (date 01 02 2004) encrypt decrypt)) - Crear una socialnetwork
 ;(define face (register face (date 01 04 2021) "rodrigo" "12345")) - Registrar usuario.
 ;(define face (register face (date 12 09 2021) "stefane" "abcde")) - Registar usuario.
@@ -69,11 +73,12 @@
 
 
 ;FUNCION FOLLOW
+
 ;Descripción: Función que permite agregar un usuario a la lista de amigos de otro usuario, retorna socialnetwork y cierra sesion.
 ;dominio: socialnetwork
 ;recorrido: date x user
 ;recorrido: socialnetwork
-
+;Método get-user utiliza recursión lo cual esta descrito en su definición.
 (define follow (lambda (sn)
                  (lambda (dt)
                    (lambda (usr)
@@ -95,7 +100,9 @@
                       ))))
 )
 
+
 ;EJEMPLOS DE PRUEBA PARA FOLLOW
+
 ;(define face (socialnetwork "Facebook" (date 01 02 2004) encrypt decrypt))  - Crea socialnetwork.
 ;(define face(register face (date 01 04 2021) "rodrigo" "12345")) - Registra un usuario.
 ;(define face(register face (date 12 09 2021) "stefane" "abcde")) - Registra un usuario.
@@ -115,10 +122,12 @@
 
 
 ;FUNCION POST
+
 ;Descripción: Función que permite a un usuario realizar un post en su muro o en el de otros usuarios.
 ;Dominio: socialnetwork
 ;Recorrido: date x string x list
 ;Recorrido: socialnetwork
+;Método post-to-users utiliza recursión lo cual esta descrito en su definición.
 
 (define post (lambda (sn)
                (lambda (dt)
@@ -136,6 +145,7 @@
 
 
 ;EJEMPLOS DE PRUEBA PARA POST
+
 ;(define face (socialnetwork "Facebook" (date 01 02 2004) encrypt decrypt)) - Crea socialnetwork.
 ;(define face (register face (date 01 04 2021) "rodrigo" "12345")) - Registra usuario.
 ;(define face (register face (date 12 09 2021) "stefane" "abcde")) - Registra usuario.
@@ -155,7 +165,8 @@
 ;-------------------------------------------------------------------------------------------------
 
 
-;share
+;FUNCION SHARE
+
 ;Descripción: Función que permite a un usuario compartir una publicacion de x usuario en su propio muro, o en el muro de demas usuarios.
 ;Dominio: socialnetwork
 ;Recorrido: date x entero x list
@@ -169,9 +180,9 @@
                        (if (null? pub)
                            sn
                            (if (null? users)
-                               (f-aux1 sn (get-username loggeduser) dt (get-publication-content pub) users (get-publication-id pub))                              
+                               (f-aux1 sn (get-username loggeduser) dt ((get-encrypt sn) (get-publication-content pub)) users (get-publication-id pub))                              
                                (post-to-users sn (only-friend-list (get-account (get-account-list sn) (get-username loggeduser)) users null) dt
-                                              (get-publication-content pub) (get-username loggeduser) (get-publication-id pub))                          
+                                              ((get-encrypt sn) (get-publication-content pub)) (get-username loggeduser) (get-publication-id pub))                          
                             ) 
                         )
                       )                     
@@ -180,6 +191,7 @@
 
 
 ;EJEMPLOS DE PRUEBA PARA SHARE
+
 ;(define face (socialnetwork "Facebook" (date 01 02 2004) encrypt decrypt)) - Crea socialnetwork.
 ;(define face (register face (date 01 04 2021) "rodrigo" "12345")) - Registra usuario.
 ;(define face (register face (date 12 09 2021) "stefane" "abcde")) - Registra usuario.
@@ -199,6 +211,66 @@
 ;(define face (((login face "rodrigo" "12345" share) (date 30 10 2020)) 6)) - Se comparte post ID 6 en publicaciones propias.
 ;(define face (((login face "rodrigo" "12345" share) (date 30 10 2020)) 2)) - Se comparte post ID 2 en publicaciones propias.
 ;(define face (((login face "rodrigo" "12345" share) (date 30 10 2020)) 2 "bastian" "martina")) - se comparte post ID 2 en publicaciones de amigos.
+
+
+;-------------------------------------------------------------------------------------------------
+
+
+;FUNCION SOCIALNETWORK->STRING
+
+;Descripción: Función que imprime una red social de manera legible.
+;Dominio: socialnetwork
+;Recorrido: string
+;Se utiliza recursion de cola en función auxiliar aux-social-string la cual recorre cada cuenta de la socialnetwork.
+
+(define socialnetwork->string (lambda (sn)
+       (if (equal? (get-logged-user sn) "")
+           (aux-social-string (get-account-list sn) (get-account-list sn) "" (get-decrypt sn))
+           (aux-social-string (filter (lambda (x) (equal? (car (car x)) (get-logged-user sn))) (get-account-list sn))
+                              (get-account-list sn) "" (get-decrypt sn))
+       )
+))
+
+(define aux-social-string (lambda (account-list-temp account-list temp-string decryptFn)
+       (if (null? account-list-temp)
+           temp-string
+           (aux-social-string (cdr account-list-temp) account-list
+                              (string-append temp-string (account->string (car account-list-temp) account-list decryptFn)) decryptFn)
+        )
+))
+
+;EJEMPLOS DE PRUEBA PARA SOCIALNETWORK->STRING
+
+;(define face (socialnetwork "Facebook" (date 01 02 2004) encrypt decrypt))
+;(define face (register face (date 01 04 2021) "rodrigo" "12345"))
+;(define face (register face (date 12 09 2021) "stefane" "abcde"))
+;(define face (register face (date 12 09 2021) "martina" "abcde"))
+;(define face (register face (date 12 09 2021) "bastian" "abcde"))
+
+;(define face (((login face "rodrigo" "12345" follow) (date 30 10 2020)) "stefane"))
+;(define face (((login face "rodrigo" "12345" follow) (date 30 10 2020)) "martina"))
+;(define face (((login face "rodrigo" "12345" follow) (date 30 10 2020)) "bastian"))
+;(define face (((login face "stefane" "abcde" follow) (date 30 10 2020)) "rodrigo"))
+;(define face (((login face "stefane" "abcde" follow) (date 30 10 2020)) "bastian"))
+;(define face (((login face "stefane" "abcde" follow) (date 30 10 2020)) "martina"))
+;(define face (((login face "bastian" "abcde" follow) (date 30 10 2020)) "rodrigo"))
+
+;(define face (((login face "rodrigo" "12345" post) (date 01 02 2021)) "primer post rodrigo"))
+;(define face (((login face "stefane" "abcde" post) (date 04 01 2021)) "primer post stefane"))
+;(define face (((login face "stefane" "abcde" post) (date 10 03 2021)) "Hola Rodrigo" "rodrigo"))
+;(define face (((login face "bastian" "abcde" post) (date 26 04 2021)) "Hola Rodrigo" "rodrigo"))
+;(define face (((login face "bastian" "abcde" post) (date 30 2 2021)) "Hola soy bastian"))
+;(define face (((login face "stefane" "abcde" post) (date 01 02 2021)) "Hola martina" "martina"))
+
+;(define face (((login face "rodrigo" "12345" share) (date 02 05 2021)) 4))
+;(define face (((login face "stefane" "abcde" share) (date 15 01 2021)) 4 "rodrigo"))
+;(define face (((login face "stefane" "abcde" share) (date 15 01 2021)) 1 "martina"))
+
+
+
+;(display (socialnetwork->string face))
+;(display (login face "rodrigo" "12345" socialnetwork->string))
+
 
 
 ;-------------------------------------------------------------------------------------------------
@@ -227,6 +299,7 @@
 ;Descripción: Función recursiva que permite aplicar un post a un listado n de usuarios.
 ;Dominio: socialnetwork x list x date x string x string
 ;Recorrido: funcion
+;Se utiliza recursion de cola para evitar desbordamiento al postear en mulitples usuarios.
 
 (define post-to-users (lambda (sn user-to dt content user-from pOrigenID)
        (if (null? user-to)

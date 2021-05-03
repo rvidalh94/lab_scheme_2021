@@ -103,3 +103,6 @@
 
 (provide date)
 (provide date?)
+(provide get-day)
+(provide get-month)
+(provide get-year)

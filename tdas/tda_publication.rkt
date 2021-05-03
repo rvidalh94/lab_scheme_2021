@@ -11,7 +11,7 @@
 ;Recorrido: lista con la publicacion creada
 
 (define publication (lambda (pubId user body datep pubOrgID)
-     (list pubId user  body datep 0 0 pubOrgID)
+     (list pubId user body datep 0 0 pubOrgID)
 ))
 
 
@@ -24,9 +24,35 @@
 ))
 
 
+;get-publication-user
+(define get-publication-user (lambda (pub)
+       (car (cdr pub))
+))
+
+
 ;get-publication-content
 (define get-publication-content (lambda (pub)
        (car (cdr (cdr pub)))
+))
+
+;get-publication-date
+(define get-publication-date (lambda (pub)
+       (car (cdr (cdr (cdr pub))))
+))
+
+;get-publication-likes
+(define get-publication-likes (lambda (pub)
+       (car (cdr (cdr (cdr (cdr pub)))))
+))
+
+;get-publication-dislikes
+(define get-publication-dislikes (lambda (pub)
+       (car (cdr (cdr (cdr (cdr (cdr pub))))))
+))
+
+;get-publication-puborgid
+(define get-publication-puborgid (lambda (pub)
+       (car (cdr (cdr (cdr (cdr (cdr (cdr pub)))))))
 ))
 
 ;get-publication
@@ -65,4 +91,9 @@
 (provide add-publication)
 (provide get-publication)
 (provide get-publication-id)
+(provide get-publication-user)
 (provide get-publication-content)
+(provide get-publication-date)
+(provide get-publication-likes)
+(provide get-publication-dislikes)
+(provide get-publication-puborgid)

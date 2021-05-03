@@ -2,6 +2,7 @@
 (require "tda_user.rkt")
 (require "tda_date.rkt")
 (require "tda_account.rkt")
+(require "tda_publication.rkt")
 (require "otras_funciones.rkt")
 
 
@@ -123,6 +124,9 @@
 
 
 
+
+
+
 (provide socialnetwork)
 (provide socialnetwork?)
 (provide encrypt)
@@ -136,3 +140,4 @@
 (provide get-encrypt)
 (provide get-decrypt)
 (provide get-last-pubID)
+(provide get-account-list)

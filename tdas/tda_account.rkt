@@ -231,6 +231,114 @@
 ))
 
 
+
+(define account->string (lambda (account account-list decryptFn)
+       (string-append "Cuenta de usuario: " (get-username (get-account-user account)) "\n"
+                      "Fecha creación cuenta: " (number->string (get-day (get-account-date account))) "/"
+                      (number->string(get-month (get-account-date account))) "/"
+                      (number->string(get-year (get-account-date account))) "\n"
+                      "Lista de amigos: " (to-print-users (get-account-friends account) "") "\n"
+                      "\n"
+                      "Publicaciones: \n"
+                      (owner-post (filter (lambda (x) (and (equal? (car (cdr x))
+                                                                      (get-username (get-account-user account))) (= (get-publication-puborgid x) 0)))
+                                                                      (get-account-pub account))
+                                                                      (get-username (get-account-user account)) "" decryptFn)
+                      (other-user-post (filter (lambda (x) (and (not (equal? (car (cdr x))
+                                                                      (get-username (get-account-user account)))) (= (get-publication-puborgid x) 0))) (get-account-pub account))
+                                                                      (get-username (get-account-user account)) "" decryptFn)
+                      (owner-share (filter (lambda (x) (and (not (= (get-publication-puborgid x) 0)) (equal? (car (cdr x))
+                                                                      (get-username (get-account-user account))))) (get-account-pub account))
+                                                                      (get-username (get-account-user account)) "" decryptFn account-list)
+                      (other-user-share (filter (lambda (x) (and (not (= (get-publication-puborgid x) 0)) (not (equal? (car (cdr x))
+                                                                      (get-username (get-account-user account)))))) (get-account-pub account))
+                                                                      (get-username (get-account-user account)) "" decryptFn account-list)
+                      "\n"
+                                                                                                                              
+        )
+))
+
+
+(define to-print-users (lambda (x temp-string)
+       (if (null? x)
+           temp-string
+           (to-print-users (cdr x) (string-append temp-string (car x) " "))
+        )
+))
+
+
+(define owner-post (lambda (publication-list usr temp-string decryptFn)
+     (if (null? publication-list)
+         temp-string
+         (owner-post (cdr publication-list) usr (string-append temp-string "\n" usr " dijo el " (number->string(get-day (get-publication-date
+                                                                                                                           (car publication-list)))) "/"
+                                                                       (number->string(get-month (get-publication-date (car publication-list)))) "/"
+                                                                       (number->string(get-year (get-publication-date (car publication-list)))) ":" "\n"
+                                                                       (decryptFn (get-publication-content (car publication-list))) "\n"
+                                                                       "Likes: " (number->string(get-publication-likes (car publication-list))) " - "
+                                                                       "Dislikes: " (number->string(get-publication-likes (car publication-list)))  "\n"
+                                                                       ) decryptFn))))
+
+
+(define other-user-post (lambda (publication-list usr temp-string decryptFn)
+     (if (null? publication-list)
+         temp-string
+         (other-user-post (cdr publication-list) usr (string-append temp-string "\n"
+                                                                       (get-publication-user (car publication-list)) " dijo a " usr
+                                                                       " el "
+                                                                       (number->string(get-day (get-publication-date (car publication-list)))) "/"
+                                                                       (number->string(get-month (get-publication-date (car publication-list)))) "/"
+                                                                       (number->string(get-year (get-publication-date (car publication-list)))) ":" "\n"
+                                                                       (decryptFn (get-publication-content (car publication-list))) "\n"
+                                                                       "Likes: " (number->string(get-publication-likes (car publication-list))) " - "
+                                                                       "Dislikes: " (number->string(get-publication-likes (car publication-list)))  "\n"
+                                                                       ) decryptFn))))
+
+
+
+(define owner-share (lambda (publication-list usr temp-string decryptFn account-list)
+                      (if (null? publication-list)
+                          temp-string
+                          (let ([orgPost (search-publication account-list (get-publication-puborgid (car publication-list)))])
+                           (if (null? orgPost)
+                                temp-string
+                                (owner-share (cdr publication-list) usr (string-append temp-string "\n"
+                                                                          usr " compartió la publicación de " (get-publication-user orgPost)
+                                                                          " el "
+                                                                          (number->string(get-day (get-publication-date (car publication-list)))) "/"
+                                                                          (number->string(get-month (get-publication-date (car publication-list)))) "/"
+                                                                          (number->string(get-year (get-publication-date (car publication-list)))) ":" "\n"
+                                                                          (decryptFn (get-publication-content (car publication-list))) "\n"
+                                                                          "Likes: " (number->string(get-publication-likes (car publication-list))) " - "
+                                                                          "Dislikes: " (number->string(get-publication-likes (car publication-list)))  "\n"
+                                                                          ) decryptFn account-list)
+                           )))))
+
+
+(define other-user-share (lambda (publication-list usr temp-string decryptFn account-list)
+                      (if (null? publication-list)
+                          temp-string
+                          (let ([orgPost (search-publication account-list (get-publication-puborgid (car publication-list)))])
+                           (if (null? orgPost)
+                                temp-string
+                                (other-user-share (cdr publication-list) usr (string-append temp-string "\n"
+                                                                          (get-publication-user (car publication-list))
+                                                                          " compartió una publicación a " usr
+                                                                          " el "
+                                                                          (number->string(get-day (get-publication-date (car publication-list)))) "/"
+                                                                          (number->string(get-month (get-publication-date (car publication-list)))) "/"
+                                                                          (number->string(get-year (get-publication-date (car publication-list)))) "\n"
+                                                                          (get-publication-user orgPost) " dijo el : " 
+                                                                          (number->string(get-day (get-publication-date orgPost))) "/"
+                                                                          (number->string(get-month (get-publication-date orgPost))) "/"
+                                                                          (number->string(get-year (get-publication-date orgPost))) "\n"
+                                                                          (decryptFn (get-publication-content orgPost)) "\n"
+                                                                          "Likes: " (number->string(get-publication-likes (car publication-list))) " - "
+                                                                          "Dislikes: " (number->string(get-publication-likes (car publication-list)))  "\n"
+                                                                          ) decryptFn account-list)
+                           )))))
+
+
 (provide get-account-user)
 (provide get-account-date)
 (provide get-account-friends)
@@ -245,3 +353,4 @@
 (provide get-account)
 (provide only-friend-list)
 (provide search-publication)
+(provide account->string)
