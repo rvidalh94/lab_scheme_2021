@@ -86,14 +86,17 @@
                          (let ([loggeduser (get-user (get-account-list sn) (get-logged-user sn))])                          
                            (if (exist-friend (get-account-friends (get-account (get-account-list sn) (get-username loggeduser))) usr)
                                sn
-                               (list (get-social-name sn)
-                                     (get-social-date sn)
-                                     (update-account (get-username loggeduser) (update-account-friends
-                                     (get-account (get-account-list sn) (get-username loggeduser))
-                                     (appendPropio (get-account-friends (get-account (get-account-list sn) (get-username loggeduser))) usr))
-                                     (get-account-list sn) null)
+                               (if (null? (get-account (get-account-list sn) usr))
+                                   sn
+                                   (list (get-social-name sn)
+                                         (get-social-date sn)
+                                         (update-account (get-username loggeduser) (update-account-friends
+                                                                                    (get-account (get-account-list sn) (get-username loggeduser))
+                                                                                    (appendPropio (get-account-friends (get-account (get-account-list sn) (get-username loggeduser))) usr))
+                                                         (get-account-list sn) null)
                                      
-                               "" (get-encrypt sn) (get-decrypt sn) (get-last-pubID sn))
+                                         "" (get-encrypt sn) (get-decrypt sn) (get-last-pubID sn))
+                               )
                             ) 
                           ) 
                          sn
@@ -186,7 +189,7 @@
                             ) 
                         )
                       )                     
-                    ) 
+                    )
 ))))
 
 
