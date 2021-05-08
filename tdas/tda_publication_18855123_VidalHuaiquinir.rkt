@@ -1,5 +1,5 @@
 #lang racket
-(require "otras_funciones.rkt")
+(require "otras_funciones_18855123_VidalHuaiquinir.rkt")
 
 ;TDA publication
 

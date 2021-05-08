@@ -1,8 +1,8 @@
 #lang racket
-(require "tda_user.rkt")
-(require "tda_date.rkt")
-(require "tda_publication.rkt")
-(require "otras_funciones.rkt")
+(require "tda_user_18855123_VidalHuaiquinir.rkt")
+(require "tda_date_18855123_VidalHuaiquinir.rkt")
+(require "tda_publication_18855123_VidalHuaiquinir.rkt")
+(require "otras_funciones_18855123_VidalHuaiquinir.rkt")
 
 ;TDA ACCOUNT
 
@@ -327,7 +327,7 @@
                                                                           " el "
                                                                           (number->string(get-day (get-publication-date (car publication-list)))) "/"
                                                                           (number->string(get-month (get-publication-date (car publication-list)))) "/"
-                                                                          (number->string(get-year (get-publication-date (car publication-list)))) "\n"
+                                                                          (number->string(get-year (get-publication-date (car publication-list)))) ":" "\n"
                                                                           (get-publication-user orgPost) " dijo el : " 
                                                                           (number->string(get-day (get-publication-date orgPost))) "/"
                                                                           (number->string(get-month (get-publication-date orgPost))) "/"

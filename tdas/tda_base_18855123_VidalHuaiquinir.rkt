@@ -1,11 +1,11 @@
 #lang racket
 
-(require "tda_socialnetwork.rkt")
-(require "tda_date.rkt")
-(require "tda_user.rkt")
-(require "tda_account.rkt")
-(require "tda_publication.rkt")
-(require "otras_funciones.rkt")
+(require "tda_socialnetwork_18855123_VidalHuaiquinir.rkt")
+(require "tda_date_18855123_VidalHuaiquinir.rkt")
+(require "tda_user_18855123_VidalHuaiquinir.rkt")
+(require "tda_account_18855123_VidalHuaiquinir.rkt")
+(require "tda_publication_18855123_VidalHuaiquinir.rkt")
+(require "otras_funciones_18855123_VidalHuaiquinir.rkt")
 
 
 ;FUNCION REGISTER
